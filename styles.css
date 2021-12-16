@@ -1,0 +1,104 @@
+html {
+    overflow: hidden;
+    width: 100%;
+}
+body {
+    margin: 0;
+    height: 100vh;
+    /* prevent overscroll bounce*/
+    background: linear-gradient(-15deg, #262a33 0%, #401949 50%, #262a33 100%);
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    /* iOS velocity scrolling */
+    width: 100%;
+    position: relative;
+}
+canvas {
+    z-index: -1;
+    position: absolute;
+}
+.button,
+button {
+    padding: 0;
+    margin: 0;
+    border: none;
+    outline: none;
+    color: #A6A6A6;
+    cursor: pointer;
+    font-family: sans-serif;
+    font-size: 1.25em;
+    letter-spacing: 0px;
+    background: linear-gradient(120deg, #3c3554 10%, #2b0e16 100%);
+    background-size: 200% 100%;
+    background-position-x: 100%;
+    transition: color 0.3s, background-position-x 0.3s, opacity 0.3s;
+    padding-top: 5px;
+    text-align: center;
+    opacity: 80%;
+}
+.button.attention {
+    background: linear-gradient(120deg, #5f4179 0%, #332726 100%);
+    box-shadow: 3px 2px 3px black;
+    background-size: 200% 100%;
+    background-position-x: 100%;
+    border-radius: 7px;
+    font-weight: bold;
+    letter-spacing: 0px;
+    transition: color 0.3s, background 0.3s, box-shadow 0.3s, transform 0.3s, 0.3s;
+}
+.button[disabled] {
+    background: linear-gradient(120deg, #272628 0%, #64573e 100%);
+}
+.buttons-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100%;
+    padding: 40px;
+    padding-top: 0;
+}
+.buttons-container > * {
+    padding: 0;
+    margin-left: 10px;
+    margin-right: 10px;
+    min-height: 40px;
+    height: 15%;
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+.buttons-container > *.left {
+    margin-right: auto;
+}
+.buttons-container > *.right {
+    margin-left: auto;
+}
+
+
+@media(hover: hover) and (pointer: fine) {
+    .button,
+    button {
+        letter-spacing: 2px;
+    }
+    .button.attention {
+        letter-spacing: 3px;
+    }
+    button:hover,
+    .button:hover {
+        color: #F6F6F6;
+        background-position-x: 0;
+        opacity: 95%;
+    }
+    .button.attention:hover {
+        color: #F6F6F6;
+        background-position-x: 0;
+        box-shadow: 8px 3px 16px black;
+    }
+    .button.attention.left:hover {
+        transform: translateX(20px) scale(1.03);
+    }
+    .button.attention.right:hover {
+        transform: translateX(-20px) scale(1.03)
+    }
+}

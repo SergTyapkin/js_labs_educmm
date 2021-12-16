@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>SergTyapkin | Графики</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#2e233f">
+    <link rel="icon" href="./../favicon.ico" type="image/x-icon">
+    <link href="./../styles.css" rel="stylesheet">
+    <link href="./fix.css" rel="stylesheet">
+    <!-- For node modules -->
+    <!--script type="module" src="/node_modules/fusioncharts/fusioncharts.js"></script-->
+    <!--script type="module" src="/node_modules/fusioncharts/themes/fusioncharts.theme.candy.js"></script-->
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <script type="module" src="./../utils.js"></script>
+    <script type="module" src="./index.js"></script>
+
+</head>
+<body>
+    <div class="absolute-wrapper">
+        <div id="chart-1" class="chart"></div>
+        <div class="bottom right button-discotheque-container">
+            <div class="button attention double-text">
+                <a href="./.." class="text">← Назад</a>
+            </div>
+        </div>
+        <!--
+        <button id="button-x-1000" class="button attention x-1000 bottom right">x100</button>
+        <button id="button-x" class="button attention x clicked bottom right">x</button>
+        <button id="button-y" class="button attention y bottom right">y</button>
+        <button id="button-avg" class="button attention avg bottom right">avg</button>
+        -->
+    </div>
+</body>
+</html>

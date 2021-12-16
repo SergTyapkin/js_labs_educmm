@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>SergTyapkin | Графики</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#2e233f">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <link href="./styles.css" rel="stylesheet">
+    <!-- For node modules -->
+    <!--script type="module" src="/node_modules/fusioncharts/fusioncharts.js"></script-->
+    <!--script type="module" src="/node_modules/fusioncharts/themes/fusioncharts.theme.candy.js"></script-->
+    <script src="https://cdn.fusioncharts.com/fusioncharts/latest/fusioncharts.js"></script>
+    <script src="https://cdn.fusioncharts.com/fusioncharts/latest/themes/fusioncharts.theme.candy.js"></script>
+    <script src="./matrixMath.js"></script>
+    <script src="./utils.js"></script>
+    <script type="module" src="./cubic_spline.js"></script>
+    <script type="module" src="./index.js"></script>
+</head>
+<body>
+    <div class="absolute-wrapper">
+        <div id="chart-1" class="chart"></div>
+        <div class="bottom left button-discotheque-container">
+            <div id="button-discotheque" class="button attention double-text">
+                <div class="primary text">Дискотека!</div>
+                <div class="secondary text">Никаких вечеринок</div>
+            </div>
+        </div>
+        <button id="button-x-1000" class="button attention x-1000 bottom right">x100</button>
+        <button id="button-x" class="button attention x clicked bottom right">x</button>
+        <button id="button-y" class="button attention y bottom right">y</button>
+        <button id="button-avg" class="button attention avg bottom right">avg</button>
+    </div>
+
+    <footer>
+        <button id="button-left" class="footer-button left active"><br>Сплайном</button>
+        <button id="button-right" class="footer-button right"><br>Лагранжем</button>
+    </footer>
+</body>
+</html>
