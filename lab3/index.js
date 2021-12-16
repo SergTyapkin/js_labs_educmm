@@ -20,8 +20,8 @@ let answers_runge = []
 const chartDataConfig = {
     caption: "Потенциал мембраны нейрона от времени",
     subCaption: "для различных параметров динамической системы",
-    xAxisName: "T",
-    yAxisName: "V",
+    xAxisName: "X",
+    yAxisName: "Y",
     numberSuffix: "",
     theme: "candy",
     lineThickness: "2",
@@ -53,10 +53,10 @@ function updateChart(list) {
     const u_0 = v_0 * list[1]
 
     answers_euler = euler([v_0, u_0], t_n, getFunctions(list), getAdditionalCondition(list))
-    answers_imp_euler = implicit_euler([v_0, u_0], t_n, getFunctions(list), getDFunctions(list), getAdditionalCondition(list))
+    //answers_imp_euler = implicit_euler([v_0, u_0], t_n, getFunctions(mode), getDFunctions(mode), getAdditionalCondition(mode))
     answers_runge = runge_kutta([v_0, u_0], t_n, getFunctions(list), getAdditionalCondition(list))
 
-    chart.setJSONData(compressDataToMsline(strTValues, [answers_euler[0], answers_imp_euler, answers_runge[0]], ["euler", "imp_euler", "runge"], chartDataConfig));
+    chart.setJSONData(compressDataToMsline(strTValues, [answers_euler[0], answers_runge[0]], ["euler", "runge"], chartDataConfig));
 }
 
 const inputElems = Array.from(document.getElementsByClassName("footer-input"));
