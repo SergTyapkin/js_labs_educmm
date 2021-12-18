@@ -38,7 +38,10 @@ export function multiplyMatrix(A, B) {
     const rowsA = A.length, colsA = A[0].length,
         rowsB = B.length, colsB = B[0].length,
         C = [];
-    if (colsA !== rowsB) return false;
+
+    if (colsA !== rowsB)
+        throw RangeError("Matrices must have equal columns count! " + colsA + " != " + colsB);
+
     for (let i = 0; i < rowsA; i++)
         C[ i ] = [];
     for (let k = 0; k < colsB; k++) {

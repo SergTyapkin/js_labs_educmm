@@ -108,6 +108,8 @@ export function compressDataToHeatmap(manyYData, chartDataConfig, names = [], co
                 value: item,
                 rowId: id.toString(),
                 columnId: idx.toString(),
+                showValue: 1,
+                valueFontColor: "#dcdcdc",
             });
         });
     });
@@ -147,8 +149,7 @@ export function compressDataToHeatmap(manyYData, chartDataConfig, names = [], co
 export function compressDataToBubble(xData, manyYData, chartDataConfig, names = [], colors = []) {
     const yLinesCount = manyYData.length;
     const xLabels = [];
-    const data1 = [];
-    xData.forEach((item, idx) => {
+    xData.forEach((item) => {
         xLabels.push({
             label: item.toString(),
             x: item,
@@ -324,5 +325,79 @@ export function compressDataToDragNode(xData, manyYData, chartDataConfig, names 
                 connector: connections,
             }
         ]
+    };
+}
+
+export function compressDataToMsline(xData, manyYData, names, chartDataConfig) {
+    const yLinesCount = manyYData.length;
+    const xLabels = [];
+    xData.forEach((item) => {
+        xLabels.push({
+            label: item,
+        });
+    });
+
+    const data = {
+        color: undefined,
+        seriesname: undefined,
+        data: [],
+        anchorRadius: undefined,
+        lineThickness: undefined,
+        drawAnchors: undefined
+    };
+    //if (yLinesCount < 3) {
+    data.color = undefined;
+    data.seriesname = "";
+    data.anchorRadius = 3;
+    data.lineThickness = 2;
+    data.drawAnchors = true;
+    data.anchorAlpha = 50;
+    /*} else if (yLinesCount === 3) {
+        data.color = "#36b5d8";
+        data.seriesname = "";
+        data.lineThickness = 2;
+        data.drawAnchors = false;
+    } else {
+        data.color = undefined;
+        data.seriesname = "";
+        data.lineThickness = 1;
+        data.drawAnchors = false;
+    }*/
+
+    const dataset = [];
+    manyYData.forEach((yData, id) => {
+        const curData = [];
+        if (yData.length === 2) {
+            curData[yData[0] / 0.5] = {
+                value: yData[1],
+            };
+            data.anchorAlpha = 100;
+            data.lineThickness = 0;
+            data.anchorRadius = 2;
+        } else {
+            yData.forEach((item) => {
+                curData.push({
+                    value: item,
+                });
+            });
+        }
+        if ((yLinesCount === 3) && (id === 2)) {
+            data.lineThickness = 1;
+            data.anchorAlpha = 30;
+        }
+        data.data = curData;
+        if (names[id] !== undefined)
+            data.seriesname = names[id];
+        dataset.push(Object.assign({}, data));
+    });
+
+    return {
+        chart: chartDataConfig,
+        categories: [
+            {
+                category: xLabels
+            },
+        ],
+        dataset: dataset
     };
 }
