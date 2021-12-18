@@ -15,5 +15,6 @@ export async function CORSRequest(url, method, data) {
         alert("Для использования CORS-proxy-API нужно будет кликнуть на кнопку на их сайте. Готов?");
         location.href = cors_api_url;
     }
+    return response;
 }
 
