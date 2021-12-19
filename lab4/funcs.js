@@ -184,5 +184,6 @@ export async function PCA(matrix) {
     eigValues.forEach((val) => {
         stds.push(Math.sqrt(val / divider));
     });
+
     return [eigValues, eigVectors, stds];
 }

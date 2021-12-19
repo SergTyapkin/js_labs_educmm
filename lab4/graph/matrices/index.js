@@ -2,8 +2,19 @@ import {compressDataToHeatmap, compressDataToBubble, compressDataToMsline} from 
 import {corellation, covariation, eigen, mapMatrix} from "../../funcs.js";
 import {scalarProduct, transposeMatrix, vectorLength, multiplyMatrix} from "../../matrixMath.js";
 import {laplacian} from "../graphUtils.js";
-import {G3} from "../data3.js";
+import {G3 as G3_all} from "../data3.js";
 import {G1, G2} from "../data1_2.js";
+
+// Делаем из 1000х1000 -> 100х100
+const G3 = [];
+const reduceStrength = 10;
+for (let i = 0; i < G3_all.length; i += reduceStrength) {
+    const string = [];
+    for (let c = 0; c < G3_all[0].length; c += reduceStrength) {
+        string.push(G3_all[i][c]);
+    }
+    G3.push(string.concat());
+}
 
 // Create a JSON object to store the chart configurations
 const chartDataConfig = {
@@ -60,29 +71,45 @@ console.log(lapMatrix);
 console.log(lapEigValues);
 console.log(lapEigVectors);
 
-// Проецирование векторов на базисы
-console.log(lapEigVectors.length, lapEigVectors[0].length)
-console.log(lapMatrix.length, lapMatrix[0].length)
+// Находим вектор Фидлера
+const fidlerVal = lapEigVectors.length - 2;
+const fidlerVector = lapEigVectors[fidlerVal];
+const sortedFidlerVector = fidlerVector.concat();
+sortedFidlerVector.sort((a, b) => b - a);
+// Проецирование векторов на вектор Фидлера
+const fidlerProection = transposeMatrix(multiplyMatrix(matrix, transposeMatrix([sortedFidlerVector])))[0];
 
-const proectionMatrix = multiplyMatrix(matrix, lapEigVectors[1].sort((a, b) => b - a));
-console.log("PROECTION");
-console.log(matrix);
-console.log(lapEigVectors[1].sort((a, b) => b - a));
-console.log(proectionMatrix);
+// Копирование матрицы смежности и сопоставление вектору Фидлера
+const sortedMatrix = matrix.concat();
+sortedMatrix.forEach((string, i) => {
+    sortedMatrix[i] = string.concat();
+    sortedMatrix[i].forEach((elem, idx) => {
+        sortedMatrix[i][idx] = {
+            adjValue: elem,
+            value: fidlerVector[idx],
+        };
+    });
+    sortedMatrix[i].value = fidlerVector[i];
+});
 
-const xValues = [];
-const yValues = [];
-proectionMatrix.forEach((string) => {
-    xValues.push(string[0]);
-    yValues.push(string[1]);
+// Сортировка матрицы смежности в соответствии с вектором Фидлера.
+sortedMatrix.forEach((string) => {string.sort((a, b) => a.value - b.value);});
+sortedMatrix.sort((a, b) => a.value - b.value);
+
+// Конвертация элементов обратно в числа
+sortedMatrix.forEach((string, i) => {
+    string.forEach((elem, idx) => {
+        sortedMatrix[i][idx] = elem.adjValue;
+    });
 });
 
 // Создание конфигов для графиков на основе обработанных данных
 const adjConfig = compressDataToHeatmap(matrix, chartDataConfig);
 const lapConfig = compressDataToHeatmap(lapMatrix, chartDataConfig);
 const valConfig = compressDataToMsline(undefined, [lapEigValues], ["eigen values"], chartDataConfig);
-const proectionOn2Config = compressDataToMsline(undefined, [yValues], ["proection on 2nd vector"], chartDataConfig);
-const proectionConfig = compressDataToBubble(lapEigVectors[1], [yValues], chartDataConfig, [], ["#ea3de4"]);
+const proectionOn2Config = compressDataToMsline(undefined, [fidlerProection], ["proection on 2nd vector"], chartDataConfig);
+const proectionConfig = compressDataToBubble(fidlerVector, [fidlerProection], chartDataConfig);
+const sortedAbjConfig = compressDataToHeatmap(sortedMatrix, chartDataConfig);
 
 let chart;
 FusionCharts.ready(() => {
@@ -105,7 +132,8 @@ const lapButton = document.getElementById("lap");
 const valButton = document.getElementById("val");
 const proectionOn2Button = document.getElementById("proectionOn2");
 const proectionButton = document.getElementById("proection");
-const buttons = [adjButton, lapButton, valButton, proectionOn2Button, proectionButton];
+const sortedAdjButton = document.getElementById("sortAdj");
+const buttons = [adjButton, lapButton, valButton, proectionOn2Button, proectionButton, sortedAdjButton];
 
 adjButton.addEventListener("click", () => {
     chart.chartType("heatmap");
@@ -137,7 +165,9 @@ proectionButton.addEventListener("click", () => {
     buttons.forEach((button) => button.classList.remove("active"));
     proectionButton.classList.add("active");
 });
-
-// graphButton.addEventListener("click", () => {
-//     location.href = './graph/'
-// });
+sortedAdjButton.addEventListener("click", () => {
+    chart.chartType("heatmap");
+    chart.setJSONData(sortedAbjConfig);
+    buttons.forEach((button) => button.classList.remove("active"));
+    sortedAdjButton.classList.add("active");
+});

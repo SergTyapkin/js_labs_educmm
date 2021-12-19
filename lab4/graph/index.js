@@ -1,7 +1,18 @@
 // create adjacency matrices of graphs
 import {adjacencyMatrixToNodesEdges, generateCompleteGraph} from "./graphUtils.js";
-import {G3} from "./data3.js";
+import {G3 as G3_all} from "./data3.js";
 import {G1, G2} from "./data1_2.js";
+
+// Делаем из 1000х1000 -> 100х100
+const G3 = [];
+const reduceStrength = 15;
+for (let i = 0; i < G3_all.length; i += reduceStrength) {
+    const string = [];
+    for (let c = 0; c < G3_all[0].length; c += reduceStrength) {
+        string.push(G3_all[i][c]);
+    }
+    G3.push(string.concat());
+}
 
 const G1Data = adjacencyMatrixToNodesEdges(G1);
 const G2Data = adjacencyMatrixToNodesEdges(G2);
@@ -63,7 +74,7 @@ var optionsG3 = {
         },
         shadow: {
             enabled: true,
-            color: 'rgba(0,0,0,0.5)',
+            color: 'black',
             size:10,
             x:5,
             y:5
@@ -79,12 +90,12 @@ var optionsG3 = {
         },
     },
     edges: {
-        width: 0.1,
         smooth: {
             enabled: false,
             type: 'continuous'
         }
     },
+    /*
     physics: {
         enabled: false,
         minVelocity: 0.5,
@@ -102,6 +113,7 @@ var optionsG3 = {
         randomSeed: 191006,
         improvedLayout: false
     }
+     */
 };
 const graph = new vis.Network(container, G2Data, options);
 

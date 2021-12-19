@@ -50,7 +50,7 @@ export function adjacencyMatrixToNodesEdges(matrix) {
 }
 
 /**
- * Получает лапласиан
+ * Вычисляет лапласиан квадратной матрицы
  * @param adjacencyMatrix {number[][]}
  */
 export function laplacian(adjacencyMatrix) {

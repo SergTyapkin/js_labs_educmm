@@ -188,20 +188,20 @@ export function compressDataToBubble(xData, manyYData, chartDataConfig, names = 
 
     const dataset = [];
     manyYData.forEach((yData, id) => {
-        const curData = [];
+        const curData = [{
+            value: yData[0],
+            x: xData[0],
+            y: yData[0],
+            z: 200,
+            alpha: 0,
+            hoverAlpha: 0,
+        }];
         yData.forEach((item, idx) => {
-            let z = 1;
-            let aplha = undefined;
-            if (idx === 0) {
-                z = 200;
-                aplha = 0;
-            }
             curData.push({
                 value: item,
                 x: xData[idx],
                 y: item,
-                z: z,
-                alpha: aplha,
+                z: 1,
             });
         });
         data.data = curData;
