@@ -5,7 +5,7 @@
     height: 97%;
 }
 .absolute-wrapper {
-    background: white;
+    background: linear-gradient(0deg, #262a33 0%, #401949 50%, #262a33 100%);
 }
 .double-text .text {
     position: relative;
