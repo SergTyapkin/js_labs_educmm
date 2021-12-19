@@ -40,7 +40,7 @@ export function multiplyMatrix(A, B) {
         C = [];
 
     if (colsA !== rowsB)
-        throw RangeError("Matrices must have equal columns count! " + colsA + " != " + colsB);
+        throw RangeError("Matrix A colums(" + colsA + ") != matrix B rows(" + rowsB + ")");
 
     for (let i = 0; i < rowsA; i++)
         C[ i ] = [];

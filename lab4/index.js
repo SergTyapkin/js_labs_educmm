@@ -1,5 +1,5 @@
-import {compressDataToHeatmap, compressDataToBubble, compressDataToMsline, compressDataToDragNode, getArray, getRandom, getRandomArray} from "./utils.js";
-import {corellation, covariation, disperse, ditch, eigen, mapMatrix, mapMatrixSingle, std} from "./funcs.js";
+import {compressDataToHeatmap, compressDataToBubble, compressDataToMsline} from "./utils.js";
+import {corellation, covariation, disperse, scaling, eigen, mapMatrix, mapMatrixSingle, PCA, std} from "./funcs.js";
 import {data} from "./data.js";
 import {scalarProduct, transposeMatrix, vectorLength, multiplyMatrix} from "./matrixMath.js";
 
@@ -24,51 +24,30 @@ data.forEach((string) => diags.push(string.shift()));
 
 // Транспонирование матрицы
 const matrix = transposeMatrix(data);
-const vectors = data;
-console.log("MATRIX/VECTORS")
+console.log("MATRIX");
 console.log(matrix);
-console.log(vectors);
 
-// Получение матрицы коэффициентов корелляции
-const covMatrix = mapMatrix(matrix, covariation);
-const corMatrix = mapMatrix(matrix, corellation);
-const A = transposeMatrix(ditch(matrix));
-
-console.log("COV/COR")
-console.log(covMatrix);
-console.log(corMatrix);
+// Масштабирование матрицы
+const A = transposeMatrix(scaling(matrix));
+console.log("SCALED");
 console.log(A);
 
+// Матрица Грама
+const squaredA = multiplyMatrix(transposeMatrix(A), A);
+// Получение гравных компонент
+let [eigValues, eigVectors, stds] = await PCA(squaredA);
 
-// Получение собственных векторов - базисов
-let [eigValues, eigVectors] = await eigen(corMatrix);
-eigVectors = transposeMatrix(eigVectors);
-console.log("EIG VAL/VEC")
-console.log(eigValues);
-console.log(eigVectors);
+// Получение матрицы коэффициентов корелляции/ковариации
+const corMatrix = mapMatrix(matrix, corellation);
+const covMatrix = mapMatrix(matrix, covariation);
 
-// Сортировка векторов по собственным значениям
-eigVectors.forEach((vector, idx) => {
-    vector.eigValue = eigValues[idx];
-});
-eigValues.sort((a, b) => b - a);
-eigVectors.sort((A, B) => {
-    return B.eigValue - A.eigValue;
-});
-
-console.log("EIG VAL/VEC SORTED")
-console.log(eigValues);
-console.log(eigVectors);
+// Получение отсортированных главных компонент
+//let [eigValues, eigVectors, stds] = await PCA(corMatrix);
 
 // Проецирование векторов на базисы и разбиение точек по двум классам
-eigVectors = transposeMatrix(eigVectors);
-const proectionMatrix = multiplyMatrix(A, eigVectors);
+const proectionMatrix = multiplyMatrix(A, transposeMatrix(eigVectors));
 
-console.log("PROECTIONS")
-console.log(A);
-console.log(eigVectors);
-console.log(proectionMatrix);
-
+// Разделение полученных проекций по двум классам
 const xValues = [];
 const yValues = [[], []];
 proectionMatrix.forEach((string, idx) => {
@@ -80,16 +59,15 @@ proectionMatrix.forEach((string, idx) => {
         yValues[0].push(undefined);
         yValues[1].push(string[1]);
     }
-    console.log(string[0], string[1]);
 });
 
 // Создание конфигов для графиков на основе обработанных данных
 const covConfig = compressDataToHeatmap(covMatrix, chartDataConfig);
 const corConfig = compressDataToHeatmap(corMatrix, chartDataConfig);
+const stdConfig = compressDataToMsline(undefined, [stds], ["стандартные отклонения"], chartDataConfig);
 const proectionConfig = compressDataToBubble(xValues, yValues, chartDataConfig, ["M", "B"], ["#34e337", "#ea3de4"]);
 
 let chart;
-
 FusionCharts.ready(() => {
     chart = new FusionCharts({
         type: "heatmap",
@@ -107,9 +85,10 @@ FusionCharts.ready(() => {
 // Обработчики для кнопок
 const covButton = document.getElementById("cov");
 const corButton = document.getElementById("cor");
+const stdButton = document.getElementById("std");
 const proectionButton = document.getElementById("proection");
 const graphButton = document.getElementById("graph");
-const buttons = [covButton, corButton, proectionButton];
+const buttons = [covButton, corButton, stdButton, proectionButton];
 
 covButton.addEventListener("click", () => {
     chart.chartType("heatmap");
@@ -122,6 +101,12 @@ corButton.addEventListener("click", () => {
     chart.setJSONData(corConfig);
     buttons.forEach((button) => button.classList.remove("active"));
     corButton.classList.add("active");
+});
+stdButton.addEventListener("click", () => {
+    chart.chartType("msline");
+    chart.setJSONData(stdConfig);
+    buttons.forEach((button) => button.classList.remove("active"));
+    stdButton.classList.add("active");
 });
 proectionButton.addEventListener("click", () => {
     chart.chartType("bubble");

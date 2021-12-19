@@ -1,5 +1,6 @@
 'use strict';
 import {CORSRequest} from "./CORSRequest.js"
+import {transposeMatrix} from "./matrixMath.js";
 
 function avg(list) {
     return list.reduce((sum, num) => sum + num) / list.length;
@@ -28,9 +29,10 @@ export function covariation(X, Y, avgX = undefined, avgY = undefined) {
 }
 
 /**
+ * Масштабирует матрицу
  * @param matrix {Array<number[]>}
  */
-export function ditch(matrix) {
+export function scaling(matrix) {
     const avgs = matrix.map(avg);
     const matrixOut = [];
     matrix.forEach((string, idx) => {
@@ -157,4 +159,30 @@ export async function singular(matrix) {
         throw ReferenceError(url + " returned error code: " + response.status);
     const data = await response.json();
     return [data.left, data.values, data.right];
+}
+
+/**
+ * Выполняет поиск главных компонент матрицы и сортирует их
+ * @param matrix {Array<number[]>}
+ */
+export async function PCA(matrix) {
+    // Получение собственных векторов - базисов
+    let [eigValues, eigVectors] = await eigen(matrix);
+    eigVectors = transposeMatrix(eigVectors);
+
+// Сортировка векторов по собственным значениям
+    eigVectors.forEach((vector, idx) => {
+        vector.eigValue = eigValues[idx];
+    });
+    eigValues.sort((a, b) => b - a);
+    eigVectors.sort((A, B) => {
+        return B.eigValue - A.eigValue;
+    });
+
+    const stds = [];
+    const divider = eigValues.length - 1;
+    eigValues.forEach((val) => {
+        stds.push(Math.sqrt(val / divider));
+    });
+    return [eigValues, eigVectors, stds];
 }

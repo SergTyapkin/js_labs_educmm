@@ -1,12 +1,4 @@
-import {
-    compressDataToHeatmap,
-    compressDataToBubble,
-    compressDataToDragNode,
-    getArray,
-    getRandom,
-    getRandomArray,
-    compressDataToMsline
-} from "../../utils.js";
+import {compressDataToHeatmap, compressDataToBubble, compressDataToMsline} from "../../utils.js";
 import {corellation, covariation, eigen, mapMatrix} from "../../funcs.js";
 import {scalarProduct, transposeMatrix, vectorLength, multiplyMatrix} from "../../matrixMath.js";
 import {laplacian} from "../graphUtils.js";
@@ -63,14 +55,19 @@ lapEigVectors.sort((A, B) => {
     return B.eigValue - A.eigValue;
 });
 
+console.log("SORTED");
+console.log(lapMatrix);
+console.log(lapEigValues);
+console.log(lapEigVectors);
+
 // Проецирование векторов на базисы
 console.log(lapEigVectors.length, lapEigVectors[0].length)
 console.log(lapMatrix.length, lapMatrix[0].length)
 
-const proectionMatrix = multiplyMatrix(lapMatrix, lapEigVectors);
+const proectionMatrix = multiplyMatrix(matrix, lapEigVectors[1].sort((a, b) => b - a));
 console.log("PROECTION");
-console.log(lapMatrix);
-console.log(lapEigVectors);
+console.log(matrix);
+console.log(lapEigVectors[1].sort((a, b) => b - a));
 console.log(proectionMatrix);
 
 const xValues = [];
@@ -83,9 +80,9 @@ proectionMatrix.forEach((string) => {
 // Создание конфигов для графиков на основе обработанных данных
 const adjConfig = compressDataToHeatmap(matrix, chartDataConfig);
 const lapConfig = compressDataToHeatmap(lapMatrix, chartDataConfig);
-const valConfig = compressDataToMsline(lapEigValues.map((item, idx) => idx.toString()), [lapEigValues], ["eigen values"], chartDataConfig);
-const proectionOn2Config = compressDataToMsline(yValues.map((item, idx) => idx.toString()), [yValues], ["proection on 2nd vector"], chartDataConfig);
-const proectionConfig = compressDataToBubble(xValues, [yValues], chartDataConfig, [], ["#ea3de4"]);
+const valConfig = compressDataToMsline(undefined, [lapEigValues], ["eigen values"], chartDataConfig);
+const proectionOn2Config = compressDataToMsline(undefined, [yValues], ["proection on 2nd vector"], chartDataConfig);
+const proectionConfig = compressDataToBubble(lapEigVectors[1], [yValues], chartDataConfig, [], ["#ea3de4"]);
 
 let chart;
 FusionCharts.ready(() => {

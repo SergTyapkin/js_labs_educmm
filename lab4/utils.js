@@ -151,7 +151,7 @@ export function compressDataToBubble(xData, manyYData, chartDataConfig, names = 
     const xLabels = [];
     xData.forEach((item) => {
         xLabels.push({
-            label: item.toString(),
+            label: (Math.round(item * 10) / 10).toString(),
             x: item,
         });
     });
@@ -190,12 +190,18 @@ export function compressDataToBubble(xData, manyYData, chartDataConfig, names = 
     manyYData.forEach((yData, id) => {
         const curData = [];
         yData.forEach((item, idx) => {
+            let z = 1;
+            let aplha = undefined;
+            if (idx === 0) {
+                z = 200;
+                aplha = 0;
+            }
             curData.push({
                 value: item,
                 x: xData[idx],
                 y: item,
-                z: 1,
-                showValue: 1,
+                z: z,
+                alpha: aplha,
             });
         });
         data.data = curData;
@@ -203,7 +209,7 @@ export function compressDataToBubble(xData, manyYData, chartDataConfig, names = 
             data.seriesname = names[id];
         if (colors[id] !== undefined)
             data.color = colors[id];
-        data.plotFillAlpha = 2;
+        data.plotFillAlpha = 70;
         data.anchorBgColor = colors[id];
         data.valueBgColor = colors[id]
         dataset.push(Object.assign({}, data));
@@ -329,6 +335,9 @@ export function compressDataToDragNode(xData, manyYData, chartDataConfig, names 
 }
 
 export function compressDataToMsline(xData, manyYData, names, chartDataConfig) {
+    if (xData === undefined)
+        xData = manyYData[0].map((item, idx) => idx.toString());
+
     const yLinesCount = manyYData.length;
     const xLabels = [];
     xData.forEach((item) => {
